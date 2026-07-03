@@ -10,6 +10,13 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: -apple-system, sans-serif; background: #f0f0f0; color: #111; padding-bottom: 80px; }
+.app-wrap { max-width: 480px; margin: 0 auto; background: #f0f0f0; min-height: 100vh; position: relative; }
+@media (min-width: 500px) {
+  body { background: #ddd; }
+  .tabs { position: sticky; top: 0; }
+  .bottom { max-width: 480px; left: 50%; transform: translateX(-50%); }
+  .overlay .sheet { max-width: 480px; margin: 0 auto; }
+}
 
 h2 { font-size: 14px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; margin: 16px 16px 8px; }
 
@@ -90,6 +97,7 @@ h2 { font-size: 14px; color: #555; text-transform: uppercase; letter-spacing: 0.
 </head>
 <body>
 
+<div class="app-wrap">
 <div class="summary">
   <div class="s-stat"><div class="s-val" id="s-txn">0</div><div class="s-lbl">Sales today</div></div>
   <div class="s-stat"><div class="s-val" id="s-rev">0</div><div class="s-lbl">Revenue (Ksh)</div></div>
@@ -486,5 +494,6 @@ document.getElementById('iprice').addEventListener('keydown', function(e){ if(e.
 
 renderItems();
 </script>
+</div>
 </body>
 </html>
