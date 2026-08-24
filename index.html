@@ -124,6 +124,99 @@ body { font-family: -apple-system, sans-serif; background: #f0f0f0; color: #111;
 </style>
 </head>
 <body>
+
+<!-- FIREBASE LOGIN SCREEN -->
+<div id="login-screen" style="
+  position:fixed;
+  inset:0;
+  background:#f0f0f0;
+  z-index:10000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+">
+  <div style="
+    width:100%;
+    max-width:400px;
+    background:#fff;
+    border-radius:16px;
+    padding:24px;
+    border:1px solid #ddd;
+  ">
+
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-size:28px;margin-bottom:8px;">📊</div>
+      <h2 style="font-size:22px;margin-bottom:6px;">Sales Tracker</h2>
+      <p style="font-size:13px;color:#888;">Sign in to continue</p>
+    </div>
+
+    <input
+      id="login-email"
+      type="email"
+      placeholder="Email"
+      autocomplete="email"
+      style="
+        display:block;
+        width:100%;
+        padding:13px;
+        margin-bottom:10px;
+        border:1px solid #ddd;
+        border-radius:8px;
+        font-size:16px;
+        outline:none;
+      "
+    >
+
+    <input
+      id="login-password"
+      type="password"
+      placeholder="Password"
+      autocomplete="current-password"
+      style="
+        display:block;
+        width:100%;
+        padding:13px;
+        margin-bottom:12px;
+        border:1px solid #ddd;
+        border-radius:8px;
+        font-size:16px;
+        outline:none;
+      "
+    >
+
+    <div id="login-error" style="
+      display:none;
+      color:#c00;
+      background:#fff0f0;
+      border:1px solid #fcc;
+      border-radius:8px;
+      padding:10px;
+      font-size:13px;
+      margin-bottom:10px;
+      text-align:center;
+    "></div>
+
+    <button
+      onclick="loginUser()"
+      style="
+        width:100%;
+        padding:14px;
+        background:#007aff;
+        color:#fff;
+        border:none;
+        border-radius:10px;
+        font-size:16px;
+        font-weight:700;
+        cursor:pointer;
+      "
+    >
+      Sign In
+    </button>
+
+  </div>
+</div>
+
 <div class="app-wrap">
 
   <div class="sticky-header">
@@ -249,6 +342,147 @@ body { font-family: -apple-system, sans-serif; background: #f0f0f0; color: #111;
 
 </div>
 
+<!-- FIREBASE -->
+<script type="module">
+
+  <script type="module">
+
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+
+  // ─────────────────────────────────────
+  // FIREBASE CONFIG
+  // ─────────────────────────────────────
+
+  const firebaseConfig = {
+
+    // COPY THESE VALUES FROM YOUR
+    // FIREBASE PROJECT SETTINGS
+
+    apiKey: "AIzaSyCKTh3mipwCyjwnUeffmE_cpHbYwmWb8dI",
+    authDomain: "sales-tracker-24b20.firebaseapp.com",
+    projectId: "sales-tracker-24b20",
+    storageBucket: "sales-tracker-24b20.firebasestorage.app",
+    messagingSenderId: "697672956513",
+    appId: "1:697672956513:web:a06c5020b93eb7bba58820"
+
+  };
+
+
+  // ─────────────────────────────────────
+  // INITIALIZE FIREBASE
+  // ─────────────────────────────────────
+
+  const app = initializeApp(firebaseConfig);
+
+  const auth = getAuth(app);
+
+
+  // ─────────────────────────────────────
+  // LOGIN
+  // ─────────────────────────────────────
+
+  window.loginUser = async function() {
+
+    const email =
+      document.getElementById("login-email").value.trim();
+
+    const password =
+      document.getElementById("login-password").value;
+
+    const errorBox =
+      document.getElementById("login-error");
+
+    errorBox.style.display = "none";
+
+
+    if (!email || !password) {
+
+      errorBox.textContent =
+        "Please enter your email and password.";
+
+      errorBox.style.display = "block";
+
+      return;
+    }
+
+
+    try {
+
+      await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      errorBox.textContent =
+        "Incorrect email or password.";
+
+      errorBox.style.display = "block";
+
+    }
+
+  };
+
+
+  // ─────────────────────────────────────
+  // AUTHENTICATION STATE
+  // ─────────────────────────────────────
+
+  onAuthStateChanged(auth, function(user) {
+
+    const loginScreen =
+      document.getElementById("login-screen");
+
+
+    if (user) {
+
+      console.log(
+        "Logged in:",
+        user.email
+      );
+
+      console.log(
+        "Firebase UID:",
+        user.uid
+      );
+
+      loginScreen.style.display = "none";
+
+    } else {
+
+      console.log("No user logged in.");
+
+      loginScreen.style.display = "flex";
+
+    }
+
+  });
+
+
+  // Optional logout function for later
+  window.logoutUser = function() {
+
+    signOut(auth);
+
+  };
+
+</script>
+
+</script>
+  
 <script>
 // ═══════════════════════════════════════════════
 // CLIENT BRANDING — EDIT THESE LINES ONLY
