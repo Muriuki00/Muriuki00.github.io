@@ -355,6 +355,12 @@ body { font-family: -apple-system, sans-serif; background: #f0f0f0; color: #111;
     signOut
   } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
+  import {
+  getFirestore,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
 
   // ─────────────────────────────────────
   // FIREBASE CONFIG
@@ -380,8 +386,10 @@ body { font-family: -apple-system, sans-serif; background: #f0f0f0; color: #111;
   // ─────────────────────────────────────
 
   const app = initializeApp(firebaseConfig);
-
+  
   const auth = getAuth(app);
+  
+  const db = getFirestore(app);
 
 
   // ─────────────────────────────────────
@@ -439,35 +447,91 @@ body { font-family: -apple-system, sans-serif; background: #f0f0f0; color: #111;
   // AUTHENTICATION STATE
   // ─────────────────────────────────────
 
-  onAuthStateChanged(auth, function(user) {
+  onAuthStateChanged(auth, async function(user) {
 
-    const loginScreen =
-      document.getElementById("login-screen");
+  const loginScreen =
+    document.getElementById("login-screen");
+
+  if (!user) {
+
+    loginScreen.style.display = "flex";
+
+    return;
+  }
 
 
-    if (user) {
+  console.log("Logged in:", user.email);
 
-      console.log(
-        "Logged in:",
-        user.email
+  console.log("Firebase UID:", user.uid);
+
+
+  try {
+
+    // Find this user's document in Firestore
+    const userRef = doc(db, "users", user.uid);
+
+    const userSnap = await getDoc(userRef);
+
+
+    if (!userSnap.exists()) {
+
+      console.error("User profile not found in Firestore.");
+
+      alert(
+        "Your account is not properly configured. Please contact the business owner."
       );
 
-      console.log(
-        "Firebase UID:",
-        user.uid
-      );
-
-      loginScreen.style.display = "none";
-
-    } else {
-
-      console.log("No user logged in.");
-
-      loginScreen.style.display = "flex";
-
+      return;
     }
 
-  });
+
+    // Get the user's Firestore information
+    const userData = userSnap.data();
+
+
+    console.log("User profile:", userData);
+
+    console.log(
+      "Business ID:",
+      userData.businessId
+    );
+
+    console.log(
+      "Role:",
+      userData.role
+    );
+
+
+    // Save these for the rest of our app
+    window.currentUser = user;
+
+    window.currentUserProfile = userData;
+
+    window.currentBusinessId =
+      userData.businessId;
+
+    window.currentUserRole =
+      userData.role;
+
+
+    // Hide login screen
+    loginScreen.style.display = "none";
+
+
+  } catch (error) {
+
+    console.error(
+      "Error loading user profile:",
+      error
+    );
+
+    alert(
+      "We couldn't load your account information."
+    );
+
+  }
+
+});
 
 
   // Optional logout function for later
