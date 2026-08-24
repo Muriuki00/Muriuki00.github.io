@@ -221,9 +221,29 @@ body { font-family: -apple-system, sans-serif; background: #f0f0f0; color: #111;
 
   <div class="sticky-header">
     <div id="app-header">
-      <img id="app-logo" src="" alt="" />
-      <div><div id="app-name"></div><div id="app-tagline"></div></div>
-    </div>
+  <img id="app-logo" src="" alt="" />
+
+  <div style="flex:1;">
+    <div id="app-name"></div>
+    <div id="app-tagline"></div>
+  </div>
+
+  <button
+    onclick="logoutUser()"
+    style="
+      background:rgba(255,255,255,0.15);
+      color:#fff;
+      border:1px solid rgba(255,255,255,0.4);
+      border-radius:7px;
+      padding:7px 10px;
+      font-size:12px;
+      font-weight:600;
+      cursor:pointer;
+    "
+  >
+    Logout
+  </button>
+</div>
     <div class="summary">
       <div class="s-stat"><div class="s-val" id="s-txn">0</div><div class="s-lbl">Sales today</div></div>
       <div class="s-stat"><div class="s-val" id="s-rev">0</div><div class="s-lbl">Revenue (Ksh)</div></div>
