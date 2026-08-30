@@ -380,7 +380,7 @@ body { font-family: -apple-system, sans-serif; background: #f0f0f0; color: #111;
   doc,
   getDoc,
   collection,
-  getDocs
+  addDoc
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 
@@ -871,7 +871,7 @@ function fillFull(f) { _fullField=f; ['p-mpesa','p-cash','p-bank'].forEach(funct
 function clearField(f) { document.getElementById(f).value=''; if(_fullField===f)_fullField=null; calcPaid(); }
 ['p-mpesa','p-cash','p-bank'].forEach(function(id){ document.getElementById(id).addEventListener('input',function(){ if(_fullField===id)_fullField=null; }); });
 
-function confirmSale() {
+async function confirmSale() {
   var mpesa=parseFloat(document.getElementById('p-mpesa').value)||0;
   var cash=parseFloat(document.getElementById('p-cash').value)||0;
   var bank=parseFloat(document.getElementById('p-bank').value)||0;
@@ -881,13 +881,66 @@ function confirmSale() {
   if (paid<due) { document.getElementById('p-err2').textContent='Amount paid is less than what is owed'; document.getElementById('p-err2').style.display='block'; return; }
   if (paid>due) { document.getElementById('p-err2').textContent='⚠️ Overpayment — please correct the amounts'; document.getElementById('p-err2').style.display='block'; return; }
   var cartItems=[];
-  items.forEach(function(item){ var q=cart[item.id]||0; if(q) cartItems.push({name:item.name,price:item.price,qty:q}); });
+  items.forEach(function(item){
+  var q=cart[item.id]||0;
+  if(q) {
+    cartItems.push({
+      productId: item.id,
+      name: item.name,
+      price: item.price,
+      qty: q
+    });
+  }
+});
   // Reduce stock
   items.forEach(function(item){
     var q=cart[item.id]||0;
     if(q && item.stock!==null && item.stock!==undefined) item.stock=Math.max(0,item.stock-q);
   });
   sales.push({ id:Date.now(), date:todayKey(), ts:Date.now(), items:cartItems, payments:{mpesa:mpesa,cash:cash,bank:bank}, discount:discount, paid:paid });
+
+  try {
+
+  const salesRef = collection(
+    db,
+    "businesses",
+    window.currentBusinessId,
+    "sales"
+  );
+
+  await addDoc(salesRef, {
+    id: Date.now(),
+    businessId: window.currentBusinessId,
+    soldBy: window.currentUser.uid,
+    date: todayKey(),
+    ts: new Date(),
+    status: "completed",
+    items: cartItems,
+    payments: {
+      mpesa: mpesa,
+      cash: cash,
+      bank: bank
+    },
+    discount: discount,
+    paid: paid
+  });
+
+  console.log("Sale saved to Firestore.");
+
+} catch (error) {
+
+  console.error(
+    "Error saving sale to Firestore:",
+    error
+  );
+
+  alert(
+    "The sale could not be saved. Please try again."
+  );
+
+  return;
+}
+  
   cart={}; save(); closeCheckout(); renderItems(); renderInventory();
 }
 
