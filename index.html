@@ -946,6 +946,68 @@ await window.firebaseAddDoc(salesRef, {
 
   return;
 }
+
+  // Update product stock in Firestore
+try {
+
+  for (const item of cartItems) {
+
+    const productRef = doc(
+      db,
+      "businesses",
+      window.currentBusinessId,
+      "products",
+      item.productId
+    );
+
+    const productSnap = await getDoc(productRef);
+
+    if (!productSnap.exists()) {
+      console.error(
+        "Product not found:",
+        item.productId
+      );
+      continue;
+    }
+
+    const productData = productSnap.data();
+
+    if (
+      productData.stock !== null &&
+      productData.stock !== undefined
+    ) {
+
+      const newStock = Math.max(
+        0,
+        productData.stock - item.qty
+      );
+
+      await updateDoc(productRef, {
+        stock: newStock
+      });
+
+      console.log(
+        "Stock updated:",
+        item.name,
+        "→",
+        newStock
+      );
+    }
+  }
+
+} catch (error) {
+
+  console.error(
+    "Error updating stock in Firestore:",
+    error
+  );
+
+  alert(
+    "The sale was saved, but the stock could not be updated."
+  );
+
+  return;
+}
   
   cart={}; save(); closeCheckout(); renderItems(); renderInventory();
 }
