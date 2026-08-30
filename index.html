@@ -410,14 +410,17 @@ body { font-family: -apple-system, sans-serif; background: #f0f0f0; color: #111;
   // ─────────────────────────────────────
 
   const app = initializeApp(firebaseConfig);
-  
-  const auth = getAuth(app);
-  
-  const db = getFirestore(app);
 
-  window.firebaseDb = db;
-  window.firebaseCollection = collection;
-  window.firebaseAddDoc = addDoc;
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+window.firebaseDb = db;
+window.firebaseDoc = doc;
+window.firebaseCollection = collection;
+window.firebaseAddDoc = addDoc;
+window.firebaseGetDoc = getDoc;
+window.firebaseUpdateDoc = updateDoc;
 
   // ─────────────────────────────────────
 // LOAD PRODUCTS FROM FIRESTORE
@@ -952,15 +955,15 @@ try {
 
   for (const item of cartItems) {
 
-    const productRef = doc(
-      db,
+    const productRef = window.firebaseDoc(
+  window.firebaseDb,
       "businesses",
       window.currentBusinessId,
       "products",
       item.productId
     );
 
-    const productSnap = await getDoc(productRef);
+    const productSnap = await window.firebaseGetDoc(productRef);
 
     if (!productSnap.exists()) {
       console.error(
@@ -982,9 +985,9 @@ try {
         productData.stock - item.qty
       );
 
-      await updateDoc(productRef, {
-        stock: newStock
-      });
+      await window.firebaseUpdateDoc(productRef, {
+  stock: newStock
+});
 
       console.log(
         "Stock updated:",
