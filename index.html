@@ -378,7 +378,9 @@ body { font-family: -apple-system, sans-serif; background: #f0f0f0; color: #111;
   import {
   getFirestore,
   doc,
-  getDoc
+  getDoc,
+  collection,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 
@@ -410,6 +412,67 @@ body { font-family: -apple-system, sans-serif; background: #f0f0f0; color: #111;
   const auth = getAuth(app);
   
   const db = getFirestore(app);
+
+  // ─────────────────────────────────────
+// LOAD PRODUCTS FROM FIRESTORE
+// ─────────────────────────────────────
+
+async function loadProductsFromFirestore() {
+
+  try {
+
+    const businessId = window.currentBusinessId;
+
+    if (!businessId) {
+      console.error("No business ID available.");
+      return;
+    }
+
+    const productsRef = collection(
+      db,
+      "businesses",
+      businessId,
+      "products"
+    );
+
+    const productsSnap = await getDocs(productsRef);
+
+    const firestoreItems = [];
+
+    productsSnap.forEach(function(docSnap) {
+
+      const data = docSnap.data();
+
+      firestoreItems.push({
+        id: docSnap.id,
+        name: data.name,
+        price: data.price,
+        stock: data.stock
+      });
+
+    });
+
+    console.log(
+      "Products loaded from Firestore:",
+      firestoreItems
+    );
+
+    // Replace the local items with Firestore items
+    items = firestoreItems;
+
+    renderItems();
+    renderInventory();
+
+  } catch (error) {
+
+    console.error(
+      "Error loading products:",
+      error
+    );
+
+  }
+
+}
 
 
   // ─────────────────────────────────────
@@ -531,11 +594,15 @@ body { font-family: -apple-system, sans-serif; background: #f0f0f0; color: #111;
       userData.businessId;
 
     window.currentUserRole =
-      userData.role;
+  userData.role;
 
 
-    // Hide login screen
-    loginScreen.style.display = "none";
+// Load this business's products
+await loadProductsFromFirestore();
+
+
+// Hide login screen
+loginScreen.style.display = "none";
 
 
   } catch (error) {
