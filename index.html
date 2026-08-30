@@ -1092,7 +1092,16 @@ if(!firestoreSales.length){
 }
 
 var sorted = firestoreSales.slice().sort(function(a,b){
-  return b.ts.toMillis() - a.ts.toMillis();
+
+  var timeA = a.ts && typeof a.ts.toMillis === "function"
+    ? a.ts.toMillis()
+    : Number(a.ts) || 0;
+
+  var timeB = b.ts && typeof b.ts.toMillis === "function"
+    ? b.ts.toMillis()
+    : Number(b.ts) || 0;
+
+  return timeB - timeA;
 });
   var byDate={};
   firestoreSales.forEach(function(s){
