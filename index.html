@@ -420,6 +420,7 @@ window.firebaseDoc = doc;
 window.firebaseCollection = collection;
 window.firebaseAddDoc = addDoc;
 window.firebaseGetDoc = getDoc;
+window.firebaseGetDocs = getDocs;
 window.firebaseUpdateDoc = updateDoc;
 
   // ─────────────────────────────────────
@@ -1065,12 +1066,36 @@ function deleteSavedCart(id) {
 }
 
 // ── HISTORY — SALES LOG ───────────────────────────────────────────────────────
-function renderHistorySales() {
+async function renderHistorySales() {
   var el=document.getElementById('history-sales');
-  if(!sales.length){el.innerHTML='<p style="text-align:center;color:#aaa;padding:32px;font-size:14px;">No sales yet</p>';return;}
-  var sorted=sales.slice().sort(function(a,b){return b.ts-a.ts;});
+  var salesSnapshot = await window.firebaseGetDocs(
+  window.firebaseCollection(
+    window.firebaseDb,
+    "businesses",
+    window.currentBusinessId,
+    "sales"
+  )
+);
+
+var firestoreSales = [];
+
+salesSnapshot.forEach(function(docSnap) {
+  firestoreSales.push({
+    id: docSnap.id,
+    ...docSnap.data()
+  });
+});
+
+if(!firestoreSales.length){
+  el.innerHTML='<p style="text-align:center;color:#aaa;padding:32px;font-size:14px;">No sales yet</p>';
+  return;
+}
+
+var sorted = firestoreSales.slice().sort(function(a,b){
+  return b.ts.toMillis() - a.ts.toMillis();
+});
   var byDate={};
-  sales.forEach(function(s){
+  firestoreSales.forEach(function(s){
     if(!byDate[s.date])byDate[s.date]={count:0,revenue:0};
     if(!s.voided){byDate[s.date].count++;byDate[s.date].revenue+=s.paid;}
   });
@@ -1194,7 +1219,17 @@ function dismissNewDay(){localStorage.setItem(REMIND_LATER_KEY,Date.now()+30*60*
 function todayKey(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
 function pad(n){return n<10?'0'+n:''+n;}
 function formatDate(k){var p=k.split('-').map(Number);return new Date(p[0],p[1]-1,p[2]).toLocaleDateString('en-KE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
-function formatTime(ts){return new Date(ts).toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'});}
+function formatTime(ts){
+
+  if (ts && typeof ts.toDate === "function") {
+    ts = ts.toDate();
+  }
+
+  return new Date(ts).toLocaleTimeString('en-KE',{
+    hour:'2-digit',
+    minute:'2-digit'
+  });
+}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
