@@ -753,8 +753,8 @@ function renderItems() {
         '<div class="item-stock-small ' + s.cls + '">' + s.text + '</div>' +
       '</div>' +
       '<span class="item-sold">' + qty + '</span>' +
-      '<button class="btn btn-minus" onclick="adjust(' + item.id + ',-1)">−</button>' +
-      '<button class="btn btn-plus"  onclick="adjust(' + item.id + ',1)">+</button>' +
+      '<button class="btn btn-minus" onclick="adjust(\'' + item.id + '\',-1)">−</button>' +
+      '<button class="btn btn-plus" onclick="adjust(\'' + item.id + '\',1)">+</button>' +
     '</div>';
   });
   list.innerHTML = html;
