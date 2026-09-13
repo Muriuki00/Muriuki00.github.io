@@ -471,8 +471,8 @@ async function loadProductsFromFirestore() {
     window.items = firestoreItems;
     items = firestoreItems;
 
-    renderItems();
-    renderInventory();
+    window.renderItems();
+    window.renderInventory();
 
   } catch (error) {
 
