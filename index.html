@@ -1123,7 +1123,15 @@ var sorted = firestoreSales.slice().sort(function(a,b){
     html+='<div class="sale-time">🕐 '+formatTime(s.ts)+'</div>';
     if(!s.voided)html+='<button onclick="voidSale('+s.id+')" style="font-size:11px;color:#c00;border:1px solid #fcc;background:none;border-radius:5px;padding:2px 8px;cursor:pointer;">Void</button>';
     html+='</div>';
-    s.items.forEach(function(it){html+='<div class="sale-row"><span>'+esc(it.name)+' ×'+it.qty+'</span><span style="color:#888;">Ksh '+(it.price*it.qty).toLocaleString()+'</span></div>';});
+    if (Array.isArray(s.items)) {
+  s.items.forEach(function(it){
+    html += '<div class="sale-row"><span>' +
+      esc(it.name) + ' × ' + it.qty +
+      '</span><span style="color:#888;">Ksh ' +
+      (it.price * it.qty).toLocaleString() +
+      '</span></div>';
+  });
+}§
     html+='<div class="sale-total"><span>Paid</span><span class="sale-total-amt">Ksh '+s.paid.toLocaleString()+'</span></div>';
     var methods=[];
     if(s.payments.mpesa)methods.push('M-Pesa: Ksh '+s.payments.mpesa.toLocaleString());
