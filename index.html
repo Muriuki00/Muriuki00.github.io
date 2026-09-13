@@ -469,6 +469,7 @@ async function loadProductsFromFirestore() {
 
     // Replace the local items with Firestore items
     window.items = firestoreItems;
+    items = firestoreItems;
 
     renderItems();
     renderInventory();
