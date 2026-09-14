@@ -36,8 +36,10 @@ export async function recordSale({
 
   await runTransaction(db, async (transaction) => {
     const saleItems = [];
+    const stockUpdates = [];
     let total = 0;
 
+    // READ all products first
     for (const item of items) {
       const productRef = doc(
         db,
@@ -80,15 +82,24 @@ export async function recordSale({
         lineTotal
       });
 
-      total += lineTotal;
+      stockUpdates.push({
+        productRef,
+        newStock: currentStock - quantity
+      });
 
-      transaction.update(productRef, {
-        stock: currentStock - quantity,
+      total += lineTotal;
+    }
+
+    // WRITE stock changes only after all products have been read
+    for (const update of stockUpdates) {
+      transaction.update(update.productRef, {
+        stock: update.newStock,
         updatedBy: sellerId,
         updatedAt: serverTimestamp()
       });
     }
 
+    // Create the sale record
     transaction.set(saleRef, {
       items: saleItems,
       total,
