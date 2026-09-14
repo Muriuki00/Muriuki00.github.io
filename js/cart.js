@@ -1,8 +1,37 @@
 // Sales Tracker
 // Shopping cart module
 
+// The browser storage key used for this cart
+const CART_STORAGE_KEY = "salesTrackerCart";
+
+// Load the cart from the browser when this module starts
+function loadCart() {
+  const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+
+  if (!savedCart) {
+    return [];
+  }
+
+  try {
+    const parsedCart = JSON.parse(savedCart);
+
+    return Array.isArray(parsedCart) ? parsedCart : [];
+  } catch (error) {
+    console.error("Could not load saved cart:", error);
+    return [];
+  }
+}
+
+// Save the current cart to the browser
+function saveCart() {
+  localStorage.setItem(
+    CART_STORAGE_KEY,
+    JSON.stringify(cartItems)
+  );
+}
+
 // Current cart contents
-let cartItems = [];
+let cartItems = loadCart();
 
 // Get everything currently in the cart
 export function getCart() {
@@ -36,6 +65,8 @@ export function addToCart(product, quantity = 1) {
     });
   }
 
+  saveCart();
+
   return getCart();
 }
 
@@ -59,6 +90,7 @@ export function updateCartQuantity(productId, quantity) {
     removeFromCart(productId);
   } else {
     item.quantity = amount;
+    saveCart();
   }
 
   return getCart();
@@ -70,12 +102,15 @@ export function removeFromCart(productId) {
     (item) => item.productId !== productId
   );
 
+  saveCart();
+
   return getCart();
 }
 
 // Empty the entire cart
 export function clearCart() {
   cartItems = [];
+  saveCart();
 }
 
 // Calculate the cart total
