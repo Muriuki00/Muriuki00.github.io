@@ -43,7 +43,15 @@ export async function getSalesHistory(businessId) {
           (Number(item.quantity ?? item.qty) || 0)
       })),
 
-      total: Number(sale.total) || 0,
+      total:
+  Number(sale.total) ||
+  Number(sale.paid) ||
+  (sale.items || []).reduce((sum, item) => {
+    const price = Number(item.price) || 0;
+    const quantity = Number(item.quantity ?? item.qty) || 0;
+
+    return sum + (price * quantity);
+  }, 0),
 
       paymentMethod:
         sale.paymentMethod ||
