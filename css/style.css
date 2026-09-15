@@ -1,3 +1,236 @@
 /* Sales Tracker
    Main application styles
 */
+
+
+/* ==============================
+   Base
+   ============================== */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #eeeeee;
+  color: #333333;
+}
+
+
+/* ==============================
+   Application
+   ============================== */
+
+.app {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background: #ffffff;
+}
+
+
+/* ==============================
+   Header
+   ============================== */
+
+.header {
+  height: 70px;
+
+  background: #087df5;
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 14px;
+}
+
+.header h1 {
+  margin: 0;
+
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.logout-button {
+  background: transparent;
+
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 7px;
+
+  color: #ffffff;
+
+  padding: 7px 12px;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+
+/* ==============================
+   Dashboard Summary
+   ============================== */
+
+.summary {
+  height: 46px;
+
+  background: #0868ca;
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  text-align: center;
+}
+
+.summary-item {
+  flex: 1;
+}
+
+.summary-number {
+  display: block;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  line-height: 16px;
+}
+
+.summary-label {
+  display: block;
+
+  margin-top: 2px;
+
+  font-size: 8px;
+  font-weight: 500;
+}
+
+
+/* ==============================
+   Navigation Tabs
+   ============================== */
+
+.tabs {
+  height: 36px;
+
+  display: flex;
+
+  border-bottom: 1px solid #dddddd;
+
+  background: #ffffff;
+}
+
+.tab {
+  position: relative;
+
+  flex: 1;
+
+  border: none;
+
+  background: #ffffff;
+
+  color: #777777;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.tab.active {
+  color: #087df5;
+
+  font-weight: 600;
+}
+
+.tab.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: -1px;
+
+  height: 2px;
+
+  background: #087df5;
+}
+
+
+/* ==============================
+   Main Content
+   ============================== */
+
+.content {
+  min-height: calc(100vh - 152px);
+
+  background: #f5f5f5;
+
+  padding: 18px;
+}
+
+.empty-state {
+  color: #555555;
+
+  font-size: 13px;
+}
+
+
+/* ==============================
+   Cart Bar
+   ============================== */
+
+.cart-bar {
+  position: fixed;
+
+  left: 50%;
+  bottom: 0;
+
+  transform: translateX(-50%);
+
+  width: 100%;
+  max-width: 430px;
+
+  background: #ffffff;
+
+  border-top: 1px solid #dddddd;
+
+  padding: 8px;
+}
+
+.cart-button {
+  width: 100%;
+
+  border: 1px solid #087df5;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #087df5;
+
+  padding: 9px;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.cart-count {
+  margin-top: 4px;
+
+  text-align: center;
+
+  background: #cccccc;
+  color: #ffffff;
+
+  border-radius: 4px;
+
+  padding: 5px;
+
+  font-size: 12px;
+}
