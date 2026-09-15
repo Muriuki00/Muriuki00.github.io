@@ -19,6 +19,10 @@ import {
   getProducts
 } from "./products.js";
 
+import {
+  addToCart
+} from "./cart.js";
+
 
 // ==============================
 // Application elements
@@ -139,9 +143,59 @@ function renderProducts(products) {
     productInfo.appendChild(productStock);
 
 
-    productCard.appendChild(productInfo);
+    const productAction =
+  document.createElement("div");
 
-    productsList.appendChild(productCard);
+productAction.className =
+  "product-action";
+
+
+const addButton =
+  document.createElement("button");
+
+addButton.className =
+  "add-to-cart-button";
+
+addButton.type =
+  "button";
+
+addButton.textContent =
+  "Add";
+
+
+addButton.addEventListener(
+  "click",
+  () => {
+
+    try {
+
+      addToCart(product);
+
+      console.log(
+        "Added to cart:",
+        product
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Could not add product to cart:",
+        error
+      );
+
+    }
+
+  }
+);
+
+
+productAction.appendChild(addButton);
+
+
+productCard.appendChild(productInfo);
+productCard.appendChild(productAction);
+
+productsList.appendChild(productCard);
 
   });
 
