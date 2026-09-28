@@ -20,7 +20,8 @@ import {
 } from "./products.js";
 
 import {
-  addToCart
+  addToCart,
+  getCart
 } from "./cart.js";
 
 
@@ -36,6 +37,25 @@ const logoutButton =
 
 const appContent =
   document.getElementById("appContent");
+
+const cartCountElement =
+  document.getElementById("cartCount");
+
+function updateCartDisplay() {
+
+  const cart =
+    getCart();
+
+  const itemCount =
+    cart.reduce(
+      (total, item) =>
+        total + item.quantity,
+      0
+    );
+
+  cartCountElement.textContent =
+    `${itemCount} ${itemCount === 1 ? "item" : "items"}`;
+}
 
 
 // ==============================
@@ -170,6 +190,8 @@ addButton.addEventListener(
     try {
 
       addToCart(product);
+
+      updateCartDisplay();
 
       console.log(
         "Added to cart:",
